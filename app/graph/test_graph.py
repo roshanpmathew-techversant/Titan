@@ -6,15 +6,14 @@ def test_langgraph():
     state = {
         "user_query": "load schema",
         "db_id": "tenant_analytics",
-        "schema_name": "public"
-        }
-
-
+        "schema_name": "public",
+    }
 
     result = graph.invoke(state)
 
-    print("Final keys:", result.keys())
-    print("Tables:", result["schema"].tables.keys())
+    print("✅ Graph executed")
+    print("Keys:", result.keys())
+    print("Tables:", list(result["schema"]["tables"].keys())[:5])
 
 if __name__ == "__main__":
     test_langgraph()

@@ -1,5 +1,5 @@
 from typing import TypedDict, Optional, Dict, Any
-from app.models import SchemaResponse
+from app.models.schema import SchemaResponse
 
 
 class TitanState(TypedDict):
