@@ -7,6 +7,8 @@ settings = get_settings()
 
 @lru_cache
 def get_redis_client():
+    if not settings.REDIS_ENABLED:
+        return None
     return redis.Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
@@ -20,6 +22,9 @@ def cache_key(db_id: str, schema_name: str) -> str:
     return f"schema:{db_id}:{schema_name}"
 
 def get_cached_schema(key: str):
+
+    if not settings.REDIS_ENABLED:
+        return None
     try:
         client = get_redis_client()
         val = client.get(key)
@@ -28,6 +33,8 @@ def get_cached_schema(key: str):
         return None
 
 def set_cached_schema(key: str, schema: dict, ttl: int | None = None):
+    if not settings.REDIS_ENABLED:
+        return None
     try:
         client = get_redis_client()
         client.setex(
