@@ -9,7 +9,7 @@ settings = get_settings()
 def get_redis_client():
     if not settings.REDIS_ENABLED:
         return None
-    return redis.Redis(
+    client = redis.Redis(
         host=settings.REDIS_HOST,
         port=settings.REDIS_PORT,
         db=settings.REDIS_DB,
@@ -17,6 +17,14 @@ def get_redis_client():
         socket_connect_timeout=1,
         socket_timeout=1,
     )
+    try:
+        client.ping()
+        print(f"✅ Connected to Redis at {settings.REDIS_HOST}:{settings.REDIS_PORT}")
+    except (ConnectionError, TimeoutError) as e:
+        print(f"❌ Could not connect to Redis: {e}")
+        return None
+    return client
+
 
 def cache_key(db_id: str, schema_name: str) -> str:
     return f"schema:{db_id}:{schema_name}"
