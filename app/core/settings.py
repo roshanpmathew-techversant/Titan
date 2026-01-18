@@ -17,6 +17,8 @@ class Settings(BaseSettings):
 
     DB_TENANT_ANALYTICS: str 
 
+    GEMINI_API_KEY: str | None = None
+
     class Config:
         env_file = ".env"
 

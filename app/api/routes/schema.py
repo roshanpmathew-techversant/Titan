@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.graph.graph import build_titan_graph
 from app.models.schema import SchemaResponse, SchemaRequest
+from app.graph.nodes.schema_loader import schema_loader_node
 
 router = APIRouter()
 
@@ -11,8 +12,7 @@ graph = build_titan_graph()
 def load_schema(req: SchemaRequest):
     """Load and return the schema of the Titan graph database."""
     try:
-        result = graph.invoke({
-            "user_query": "load schema",
+        result = schema_loader_node({
             "db_id": req.db_id,
             "schema_name": req.schema_name
         })

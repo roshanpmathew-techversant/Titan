@@ -22,3 +22,14 @@ def get_connection_string(db_id: str) -> str | None:
 
     print(f"No connection string found for {env_key}")
     return None
+
+def get_gemini_api_key() -> str:
+    settings = get_settings()
+    api_key = settings.GEMINI_API_KEY
+
+    if not api_key:
+        raise RuntimeError(
+            "GEMINI_API_KEY is not set. Please configure it in environment or .env"
+        )
+
+    return api_key
