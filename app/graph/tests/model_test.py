@@ -1,4 +1,4 @@
-import google.generativeai as genai
+import google.genai as genai
 from app.core.secrets import get_gemini_api_key
 
 genai.configure(api_key=get_gemini_api_key())

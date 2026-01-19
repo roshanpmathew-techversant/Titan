@@ -1,25 +1,26 @@
+from google import genai
 from app.core.secrets import get_gemini_api_key
-import google.generativeai as genai
+from app.llm.langfuse import langfuse  # single client
 
-
-from app.core.secrets import get_gemini_api_key
-import google.generativeai as genai
-
-def gemini_llm_call(system_prompt: str, user_prompt: str, api_key=None) -> str:
-    """
-    Call Gemini LLM to get response
-    """
-
+def gemini_llm_call(system_prompt, user_prompt, api_key=None, metadata=None):
     if api_key is None:
         api_key = get_gemini_api_key()
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY is not set")
-    
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel("gemini-2.5-flash")
 
-    # Combine system + user prompt
+    client = genai.Client(api_key=api_key)
     full_prompt = f"{system_prompt}\n{user_prompt}"
-    response = model.generate_content(full_prompt)  # REMOVE temperature argument
 
-    return response.text
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=full_prompt
+    )
+
+    if metadata:
+        langfuse.update_current_trace(
+            input=full_prompt,
+            output=response.text,
+            metadata=metadata
+        )
+
+    return response.text.strip()

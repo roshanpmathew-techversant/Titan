@@ -5,4 +5,7 @@ redis
 langgraph
 typing-extensions
 google-generativeai
+pydantic_settings
+langfuse
+openinference-instrumentation-google-genai
 
