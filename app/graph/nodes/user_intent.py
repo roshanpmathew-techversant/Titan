@@ -36,7 +36,7 @@ def intent_extractor_node(state: TitanState) -> TitanState:
     You are an analytics intent extraction engine.
     Extract the user's intent as JSON only using this schema:
     {
-        "intent_type": "AGGREGATE | LIST | FILTER | COMPARE | TREND | SUMMARY"
+        "intent_type": "AGGREGATE | LIST | FILTER | COMPARE | TREND | SUMMARY | SOCIAL"
     }
     Do not add explanations or extra text.
     """

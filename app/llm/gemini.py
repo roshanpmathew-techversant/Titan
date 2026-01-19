@@ -12,8 +12,8 @@ def gemini_llm_call(system_prompt, user_prompt, api_key=None, metadata=None):
     full_prompt = f"{system_prompt}\n{user_prompt}"
 
     response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=full_prompt
+        model="gemini-2.0-flash-lite",
+        contents=full_prompt,
     )
 
     if metadata:
