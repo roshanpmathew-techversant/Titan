@@ -21,3 +21,8 @@ class SchemaResponse(BaseModel):
 class SchemaRequest(BaseModel):
     db_id: str = Field(..., example="tenant_analytics")
     schema_name: str = Field(default="public", example="public")
+
+
+class PrunedResponse(BaseModel):
+    version: str = 'v2'
+    tables: Dict[str, TableSchema]

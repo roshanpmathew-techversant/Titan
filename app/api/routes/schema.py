@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.graph.graph import build_titan_graph
-from app.models.schema import SchemaResponse, SchemaRequest
+from app.models.schema import SchemaResponse, SchemaRequest, PrunedResponse
 from app.graph.nodes.schema_loader import schema_loader_node
 
 router = APIRouter()
