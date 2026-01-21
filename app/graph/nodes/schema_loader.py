@@ -7,6 +7,8 @@ from app.core.secrets import get_connection_string
 from app.graph.state import TitanState
 from app.cache.redis_cache import cache_key, get_cached_schema, set_cached_schema
 
+from app.services.write_to_file import write_table_names
+
 
 
 # def ts():
@@ -59,6 +61,7 @@ def schema_loader_node(state: TitanState) -> TitanState:
     try:
         # t2 = time.perf_counter()
         schema = load_schema(conn=conn, schema_name=state["schema_name"])
+        write_table_names(schema=schema, output_file='schema.txt')
         # print(f"[{ts()}] ⏱ load_schema(): {(time.perf_counter() - t2):.3f}s")
     finally:
         conn.close()
@@ -71,6 +74,8 @@ def schema_loader_node(state: TitanState) -> TitanState:
 
     # print(f"[{ts()}] 🟢 schema_loader_node END "
     #       f"(total {(time.perf_counter() - start_total):.3f}s)")
+
+    
 
     return {
         **state,

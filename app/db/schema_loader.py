@@ -69,5 +69,6 @@ def load_schema(conn, schema_name: str = "public") -> dict:
                         "column": fc
                     }
                 })
+        
 
     return schema

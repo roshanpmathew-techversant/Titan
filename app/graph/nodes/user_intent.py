@@ -11,12 +11,12 @@ from openinference.instrumentation.google_genai import GoogleGenAIInstrumentor
 
 DEFAULT_INTENT: IntentResult = {
     "intent_type": "SOCIAL",
-    # "business_entities": [],
-    # "metrics": [],
-    # "dimensions": [],
-    # "time_range": None,
-    # "filters": [],
-    # "confidence": 0.8
+    "business_entities": [],
+    "metrics": [],
+    "dimensions": [],
+    "time_range": None,
+    "filters": [],
+    "confidence": 0.8
 }
 @observe()
 def intent_extractor_node(state: TitanState) -> TitanState:
@@ -37,6 +37,12 @@ def intent_extractor_node(state: TitanState) -> TitanState:
     Extract the user's intent as JSON only using this schema:
     {
         "intent_type": "AGGREGATE | LIST | FILTER | COMPARE | TREND | SUMMARY | SOCIAL"
+        "business_entities": [],
+        "metrics": [],
+        "dimensions": [],
+        "time_range": None,
+        "filters": [],
+        "confidence": 0-1
     }
     Do not add explanations or extra text.
     """
