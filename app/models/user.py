@@ -9,4 +9,5 @@ class UserRequest(BaseModel):
 class UserResponse(BaseModel):
     status: str
     message: Dict[str, Any]
+    pruned_schema: PrunedResponse
     

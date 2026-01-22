@@ -1,0 +1,17 @@
+consolidateddata
+customer_delivery_summary
+store_transaction_XAH
+store_transaction_XDB
+store_transaction_XDF
+store_transaction_XDG
+store_transaction_XDJ
+store_transaction_XDK
+store_transaction_XDM
+store_transaction_XDS
+store_transaction_XDT
+store_transaction_XDX
+store_transaction_XSL
+store_transaction_XSR
+store_transaction_ecomm
+store_transaction_encircle
+transactionsdata

@@ -1,11 +1,10 @@
-# pruner.py
 import re
 from typing import Dict, Any
 from app.models.schema import PrunedResponse, TableSchema, ForeignKey
 
 # Regex to ignore system tables
 SYSTEM_TABLE_PATTERN = re.compile(
-    r"(log|logs|meta|fallback|feedback|session|role|user|auth|permission)",
+    r"(log|logs|meta|fallback|session|role|auth|permission)",
     re.IGNORECASE,
 )
 
@@ -63,6 +62,8 @@ def initial_prune(schema: Dict[str, Any]) -> PrunedResponse:
                 primary_key=table_def.get("primary_key", []),
                 foreign_keys=table_def.get("foreign_keys", [])
             )
+
+    # print(pruned_tables)
 
     return PrunedResponse(
         version='v2',

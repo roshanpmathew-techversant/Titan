@@ -8,6 +8,9 @@ from app.graph.state import TitanState
 from app.cache.redis_cache import cache_key, get_cached_schema, set_cached_schema
 
 from app.services.write_to_file import write_table_names
+from app.core.settings import get_settings
+
+settings = get_settings()
 
 
 
@@ -20,14 +23,16 @@ def schema_loader_node(state: TitanState) -> TitanState:
     Load the database schema based on user query and db_id
     """
 
+    print("schema_loader_node called")
+
     # start_total = time.perf_counter()
     # print(f"[{ts()}] 🔵 schema_loader_node START")
 
     if state is None:
         state = {}
     
-    db_id = state.get("db_id")
-    schema_name = state.get("schema_name")
+    db_id = settings.DB_ID
+    schema_name = settings.DB_TENANT_ANALYTICS_SCHEMA
 
     if not db_id or not schema_name:
         return state
@@ -43,6 +48,8 @@ def schema_loader_node(state: TitanState) -> TitanState:
         # print(f"[{ts()}] ✅ cache HIT")
         # print(f"[{ts()}] 🟢 schema_loader_node END "
         #       f"(total {(time.perf_counter() - start_total):.3f}s)")
+        # print("Schema Loaded to Titan state from cache")
+
         return {**state, "schema": cached}
 
     # print(f"[{ts()}] ❌ cache MISS")
@@ -74,6 +81,8 @@ def schema_loader_node(state: TitanState) -> TitanState:
 
     # print(f"[{ts()}] 🟢 schema_loader_node END "
     #       f"(total {(time.perf_counter() - start_total):.3f}s)")
+
+    # print("Schema Loaded to Titan state from database")
 
     
 
