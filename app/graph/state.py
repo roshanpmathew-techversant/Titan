@@ -3,6 +3,7 @@ from app.models.schema import SchemaResponse, PrunedResponse
 
 class IntentResult(TypedDict, total=False):
     intent_type: str                 # AGGREGATE | LIST | FILTER | COMPARE | TREND | SUMMARY
+    keywords: List[str]
     business_entities: List[str]
     metrics: List[str]
     dimensions: List[str]

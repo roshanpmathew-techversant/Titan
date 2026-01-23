@@ -23,7 +23,7 @@ def schema_loader_node(state: TitanState) -> TitanState:
     Load the database schema based on user query and db_id
     """
 
-    print("schema_loader_node called")
+    # print("schema_loader_node called")
 
     # start_total = time.perf_counter()
     # print(f"[{ts()}] 🔵 schema_loader_node START")

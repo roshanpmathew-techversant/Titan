@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from app.graph.graph import build_titan_graph
 from app.models.user import UserRequest, UserResponse
+from app.models.schema import PrunedResponse
 from app.graph.state import TitanState
 from app.services.write_to_file import write_pruned_table_names
 
@@ -25,6 +26,7 @@ def user_input(req: UserRequest):
         if not intent:
             intent = {
                 "intent_type": "SUMMARY",
+                "keywords": [],
                 "business_entities": [],
                 "metrics": [],
                 "dimensions": [],
@@ -35,6 +37,11 @@ def user_input(req: UserRequest):
 
         # pruned_schema is already a PrunedResponse object
         pruned_schema = result.get("pruned_schema")
+        if not pruned_schema or not isinstance(pruned_schema, PrunedResponse):
+            pruned_schema = PrunedResponse(
+            version="v2",
+            tables={}
+        )
         write_pruned_table_names(pruned_schema, "llm_pruned_schema.txt")
 
         # Optional: if you need dict access
