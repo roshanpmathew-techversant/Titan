@@ -11,9 +11,14 @@ class Settings(BaseSettings):
     REDIS_DB: int = 0
     REDIS_CACHE_TTL: int = 3600
 
-    DEFAULT_SCHEMA: str = "public"
+    
 
     DB_TENANT_ANALYTICS: str
+    DB_TENANT_ANALYTICS_SCHEMA: str
+    DB_ID: str
+    # INTENT_RECOG_PROMPT: str
+    # SCHEMA_PRUNING_PROMPT: str
+
 
     GEMINI_API_KEY: str | None = None
 
