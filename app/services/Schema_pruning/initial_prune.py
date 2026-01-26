@@ -48,8 +48,8 @@ def is_analytics(
     if keyword_pattern and not keyword_pattern.search(table_name):
         return False
 
-    has_numeric = False
-    has_time = False
+    has_numeric = True
+    has_time = True
 
     columns = table_def.get("columns", {})
     for col_type in columns.values():
@@ -77,7 +77,7 @@ def initial_prune(schema: Dict[str, Any], intent: IntentResult) -> PrunedRespons
 
     keywords = intent.get("keywords", [])
     keyword_pattern = build_keyword_pattern(keywords)
-    # print(keyword_pattern)
+    print(keyword_pattern)
 
     pruned_tables: Dict[str, TableSchema] = {}
     tables = schema.get("tables", {})

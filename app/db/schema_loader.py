@@ -1,4 +1,62 @@
+from collections import defaultdict
+
+def table_signature(table_def: dict) -> tuple:
+    """
+    Creates a hashable signature for a table based on columns.
+    """
+    cols = table_def["columns"]
+    return tuple(sorted(
+        (col.lower(), dtype.lower())
+        for col, dtype in cols.items()
+    ))
+
+def collapse_similar_tables(schema: dict) -> dict:
+    """
+    Collapse tables with identical column structures into logical tables.
+    Returns a dictionary with 'tables' and 'logical_to_physical'.
+    """
+    tables = schema["tables"]
+    groups = defaultdict(list)
+
+    for table_name, table_def in tables.items():
+        sig = table_signature(table_def)
+        groups[sig].append(table_name)
+
+    collapsed_tables = {}
+    logical_to_physical = {}
+
+    for sig, table_names in groups.items():
+        if len(table_names) == 1:
+            # Single table → keep as-is
+            t = table_names[0]
+            collapsed_tables[t] = tables[t]
+        else:
+            # Multiple tables → collapse into logical table
+            logical_name = table_names[0].rsplit("_", 1)[0]  # e.g., store_txn_XAH → store_txn
+            base_table = tables[table_names[0]]
+
+            collapsed_tables[logical_name] = {
+                "columns": {
+                    "source_table": "text",  # virtual column to track origin
+                    **base_table["columns"]
+                },
+                "primary_key": base_table["primary_key"],
+                "foreign_keys": base_table["foreign_keys"],
+                "source_tables": table_names
+            }
+
+            logical_to_physical[logical_name] = table_names
+
+    return {
+        "tables": collapsed_tables,
+        "logical_to_physical": logical_to_physical
+    }
+
 def load_schema(conn, schema_name: str = "public") -> dict:
+    """
+    Load the database schema and collapse similar tables into logical tables.
+    Returns a dictionary with 'tables' and 'logical_to_physical'.
+    """
     schema = {"tables": {}}
 
     with conn.cursor() as cur:
@@ -69,6 +127,6 @@ def load_schema(conn, schema_name: str = "public") -> dict:
                         "column": fc
                     }
                 })
-        
 
-    return schema
+    # Collapse similar tables before returning
+    return collapse_similar_tables(schema)

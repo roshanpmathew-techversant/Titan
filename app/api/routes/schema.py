@@ -21,5 +21,6 @@ def load_schema(req: SchemaRequest):
     
     return{
         "version": "v1",
-        "tables": result["schema"]["tables"]
+        "tables": result["schema"]["tables"],
+        "logical_to_physical": result["schema"]["logical_to_physical"]
     }
