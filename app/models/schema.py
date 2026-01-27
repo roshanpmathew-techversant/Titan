@@ -27,3 +27,4 @@ class SchemaRequest(BaseModel):
 class PrunedResponse(BaseModel):
     version: str = 'v2'
     tables: Dict[str, TableSchema]
+    

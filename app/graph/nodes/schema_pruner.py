@@ -14,6 +14,8 @@ from app.services.Schema_pruning.secondary_prune import serialize_schema_for_llm
 @observe()
 def schema_pruner_node(state: TitanState) -> TitanState:
     raw_schema = state["schema"]
+    # combined_tables = state["schema"]["logical_to_physical"]
+    # print(combined_tables)
     intent = state.get("intent")
     user_question = state.get("user_query")
 
@@ -51,23 +53,35 @@ def schema_pruner_node(state: TitanState) -> TitanState:
         - You may ONLY remove tables or columns.
         - You must NOT add, rename, or invent tables or columns.
         - You must NOT infer new relationships.
+        - You must consider the Combined Tables List when deciding which tables are relevant.
+        - If multiple physical tables are combined into a logical table, treat them as a single unit.
+        - Do NOT select individual physical tables if a combined (logical) table is available.
         - If unsure about a table, KEEP it.
         - Output MUST be valid JSON mapping table_name -> list[column_name].
+        - If a logical table exists in Combined Tables List, selecting any of its physical tables is INVALID.
+
         """
+
 
         user_prompt = f"""
-        User question:
-        {user_question}
+            User question:
+            {user_question}
 
-        Parsed intent:
-        {intent}
+            Parsed intent:
+            {intent}
 
-        Database schema:
-        {safe_schema}
+            Database schema:
+            {safe_schema}
 
-        Task:
-        Return ONLY the minimal set of tables and columns required to answer the question.
-        """
+            Task:
+            Return ONLY the minimal set of tables and columns required to answer the question.
+
+            Important:
+            - If a table appears in the Combined Tables List, prefer the combined (logical) table.
+            - Do NOT include individual physical tables that belong to a combined table.
+            - Prune columns only after selecting the correct table (logical or standalone).
+            """
+
         # print("Schema Pruner: LLM call to be done")
 
         raw_llm_output = gemini_llm_call(

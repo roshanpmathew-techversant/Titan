@@ -81,6 +81,7 @@ def initial_prune(schema: Dict[str, Any], intent: IntentResult) -> PrunedRespons
 
     pruned_tables: Dict[str, TableSchema] = {}
     tables = schema.get("tables", {})
+    
 
     for table_name, table_def in tables.items():
         if is_analytics(
