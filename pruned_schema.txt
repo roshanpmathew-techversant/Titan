@@ -1,6 +1,8 @@
 Store
 campaigndata
+customer_delivery_summary
 product_category_sales_backup
+product_summary
 store_category_snapshot
 store_consolidated_data
 store_consolidation_test

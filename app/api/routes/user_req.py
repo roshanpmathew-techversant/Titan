@@ -48,6 +48,7 @@ def user_input(req: UserRequest):
         # pruned_schema_dict = pruned_schema.model_dump()
 
         sql_query = result.get("sql_query")
+        
 
     except Exception as e:
         print(f"Error processing user request: {e}")

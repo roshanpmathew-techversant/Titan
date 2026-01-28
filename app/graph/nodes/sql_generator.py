@@ -4,6 +4,7 @@ from app.graph.state import TitanState
 from app.llm.gemini import gemini_llm_call
 from app.core.secrets import get_gemini_api_key
 from langfuse import observe
+import re
 
 
 
@@ -126,8 +127,11 @@ def sql_generator_node(state: TitanState) -> TitanState:
         api_key=api_key,
         metadata={"node": "sql_generator"}
     )
+    
+    sql = re.sub(r"```sql|```", "", sql).strip()
+    sql = " ".join(sql.split())
 
     return {
         **state,
-        "sql_query": sql.strip()
+        "sql_query": sql
     }
