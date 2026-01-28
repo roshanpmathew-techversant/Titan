@@ -1,7 +1,8 @@
+import re
 from app.graph.state import TitanState
 from typing import  List
 
-def sql_validator(state: TitanState ) -> TitanState:
+def sql_validator_node(state: TitanState ) -> TitanState:
     errors: List[str] = []
     normalized_sql = state.strip().lower()
 
