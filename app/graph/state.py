@@ -23,6 +23,8 @@ class TitanState(TypedDict, total=False):
 
     schema_name: str
 
+    sql_query: str
+
     schema: Optional[SchemaResponse]
 
     intent: Optional[IntentResult]

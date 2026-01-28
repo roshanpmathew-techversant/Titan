@@ -47,6 +47,8 @@ def user_input(req: UserRequest):
         # Optional: if you need dict access
         # pruned_schema_dict = pruned_schema.model_dump()
 
+        sql_query = result.get("sql_query")
+
     except Exception as e:
         print(f"Error processing user request: {e}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -54,5 +56,6 @@ def user_input(req: UserRequest):
     return {
         "status": "success",
         "message": intent,
-        "pruned_schema": pruned_schema  # ✅ leave as PrunedResponse
+        "pruned_schema": pruned_schema,
+        "sql_query": sql_query
     }
