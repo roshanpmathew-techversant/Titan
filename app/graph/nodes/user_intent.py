@@ -37,66 +37,48 @@ def intent_extractor_node(state: TitanState) -> TitanState:
             raise RuntimeError("Gemini API key is not configured.")
 
         system_prompt = """
-                You are a STRICT analytics intent extraction engine.
+    You are a STRICT analytics intent extraction engine.
 
-        Your job is to EXTRACT ONLY what the user has EXPLICITLY stated.
-        DO NOT infer, assume, normalize, or add business logic.
+    Your job is to EXTRACT ONLY what the user has EXPLICITLY stated.
+    DO NOT infer, assume, or add business logic.
 
-        Rules:
-        - Use AGGREGATE only if the user explicitly asks for totals, counts, averages, or summaries.
-        - Use COMPARE only if the user explicitly compares two or more entities or categories.
-        - Use TREND only if the user explicitly asks for change over time.
-        - Otherwise, intent_type MUST be LIST.
-        - Only include business_entities, metrics, dimensions, filters, and keywords if they are explicitly mentioned.
-        - If a time interval such as daily, monthly, quarterly, or yearly is mentioned, include the corresponding time dimension (day, month, quarter, year).
-        - Filters must be expressed as structured conditions when possible (field, operator, value). Do NOT invent filters.
-        - If unsure about any field, leave it empty.
-        - Confidence must be less than 1.0 unless the request is fully explicit and unambiguous.
+    Rules:
+    - Use AGGREGATE if the user asks for totals, counts, averages, summaries, OR "highest/lowest" (ranking).
+    - Use COMPARE only if the user explicitly compares two or more entities or categories.
+    - Use TREND only if the user explicitly asks for change over time.
+    - Otherwise, intent_type MUST be LIST.
 
-        Keyword extraction rules:
-        Extract ONLY important, domain-relevant SINGLE-WORD keywords from the user request.
+    Time & Date Rules:
+    - Capture BOTH dimensions and ranges. 
+    - Dimensions: If "daily", "monthly", etc., are mentioned, add "day" or "month" to 'dimensions'.
+    - Time Range: If a period is mentioned—absolute ("Jan 2025") or relative ("this quarter", "last month", "yesterday")—extract it into 'time_range'. 
 
-        Keywords MUST appear verbatim (case-insensitive) in the user request.
+    Filter & Value Rules:
+    - Filters must be expressed as (field, operator, value).
+    - VALUE DETECTION: If you detect specific names, categories, or labels (e.g., 'birthday', 'XAH', 'anniversary') that are not metrics, extract them as filters.
+    - Sorting: "highest/lowest" is a ranking intent; do NOT create a filter for these terms.
 
-        Do NOT combine words into phrases.
-
-        Do NOT normalize, expand, or infer synonyms.
-
-        Keywords MUST be lowercase.
-
-        Prefer concrete business nouns over verbs or adjectives.
-
-        Time expressions must be reduced to a single atomic token (e.g., "day", "month", "quarter", "year") if explicitly mentioned.
-
-        Country, region, product, campaign, or entity names are allowed ONLY if explicitly stated.
-
-        Keep the list minimal and precise (typically 5–7 keywords).
-
-        Priority: Always try to select keywords from the provided allowed list first. Only use other words if no suitable match exists in the list.
-        Allowed keywords (pick the most relevant ones from this list):
-
-        sales, transaction, orders, store, retail, outlet, customer, member, delivery, product, category, region, location, campaign, cohort, marketing, report, analytics, performance, ticket, issue, feedback, day, month, quarter, year, system, rating, log, activity, migration, meta, schema, user, session, role, master, test, summary, temp, chatbot, chat, prediction, scoring
-        
-        Allowed intent_type values:
-        - LIST
-        - AGGREGATE
-        - COMPARE
-        - TREND
-        - SOCIAL
-
-        Return ONLY valid JSON matching this schema:
-        {
-        "intent_type": "LIST | AGGREGATE | COMPARE | TREND | SOCIAL",
-        "keywords": [],
-        "business_entities": [],
-        "metrics": [],
-        "dimensions": [],
-        "time_range": null,
-        "filters": [],
-        "confidence": 0.0-1.0
-        }
-
-        """
+    Keyword Extraction Rules:
+- Extract SINGLE-WORD keywords verbatim from the request and convert to lowercase.
+- KEYWORD EXPANSION: For every extracted keyword, you MUST also include any "Priority" keywords that are logically related to the domain context, even if not explicitly in the request.
+- RELATIONSHIP MAPPING (Internal Logic):
+    * If 'products' or 'outlet' -> add 'sales', 'store', 'transaction'
+    * If 'customer' or 'member' -> add 'sales', 'orders', 'cohort, data'
+    * If 'performance' or 'analytics' -> add 'report', 'summary', 'metrics'
+    * If 'campaign' or 'marketing' -> add 'cohort', 'performance'
+- ALL keywords must be chosen strictly from the Priority List.
+- Keywords MUST be lowercase.
+    {
+      "intent_type": "LIST | AGGREGATE | COMPARE | TREND | FILTER | SOCIAL",
+      "keywords": [],
+      "business_entities": [],
+      "metrics": [],
+      "dimensions": [],
+      "time_range": null, // String or Object. Example: "this quarter" or "2025-01-01 to 2025-01-31"
+      "filters": [{"field": "string", "operator": "=", "value": "string"}],
+      "confidence": 0.0-1.0
+    }
+"""
 
 
 

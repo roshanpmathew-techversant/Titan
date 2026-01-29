@@ -14,6 +14,7 @@ from app.services.Schema_pruning.secondary_prune import serialize_schema_for_llm
 @observe()
 def schema_pruner_node(state: TitanState) -> TitanState:
     raw_schema = state["schema"]
+    # print(raw_schema)
     # combined_tables = state["schema"]["logical_to_physical"]
     # print(combined_tables)
     intent = state.get("intent")
@@ -23,6 +24,7 @@ def schema_pruner_node(state: TitanState) -> TitanState:
 
     
     pruned_schema = initial_prune(raw_schema, intent)
+    # print(pruned_schema)
     write_pruned_table_names(pruned_schema, "pruned_schema.txt")
 
     
@@ -30,6 +32,7 @@ def schema_pruner_node(state: TitanState) -> TitanState:
 
     # print("Schema Pruner: schema serialization to be done.")
     safe_schema = serialize_schema_for_llm(pruned_schema)
+    # print(safe_schema)
     # print("Schema Pruner: schema serialization successful.")
 
 
@@ -37,6 +40,8 @@ def schema_pruner_node(state: TitanState) -> TitanState:
         final_tables = pruned_schema.tables
     else:
         final_tables = pruned_schema.get("tables", {})
+    
+    # print(final_tables)
     # print("Final tables: Done", )
    
 
@@ -50,18 +55,19 @@ def schema_pruner_node(state: TitanState) -> TitanState:
         You are a database schema pruning engine.
 
         Rules:
+        - Your goal is to provide the SHORTEST schema necessary to answer the user request.
         - You may ONLY remove tables or columns.
-        - You must NOT add, rename, or invent tables or columns.
-        - You must NOT infer new relationships.
-        - You must consider the Combined Tables List when deciding which tables are relevant.
-        - If multiple physical tables are combined into a logical table, treat them as a single unit.
-        - Do NOT select individual physical tables if a combined (logical) table is available.
-        - If unsure about a table, KEEP it.
+        - If a Logical Table (from the Combined Tables List) represents multiple Physical Tables, you MUST return the Logical Table schema and NOT the individual physical shards.
+        - Do NOT invent, rename, or infer tables or columns.
+        - COLUMN SELECTION: Keep all columns required for:
+            1. The Metric (e.g., 'price', 'totalsales')
+            2. The Dimension/Identity (e.g., 'brand', 'product_name')
+            3. The Filter/Time Range (e.g., 'invoice_date', 'region')
+        - If the user asks for a comparison or trend (e.g., 'price drops'), ensure you keep columns that allow for historical comparison.
+        - If unsure about a table's relevance, KEEP it.
         - Output MUST be valid JSON mapping table_name -> list[column_name].
-        - If a logical table exists in Combined Tables List, selecting any of its physical tables is INVALID.
-
-        """
-
+         """
+        # print(safe_schema)
 
         user_prompt = f"""
             User question:
@@ -75,11 +81,6 @@ def schema_pruner_node(state: TitanState) -> TitanState:
 
             Task:
             Return ONLY the minimal set of tables and columns required to answer the question.
-
-            Important:
-            - If a table appears in the Combined Tables List, prefer the combined (logical) table.
-            - Do NOT include individual physical tables that belong to a combined table.
-            - Prune columns only after selecting the correct table (logical or standalone).
             """
 
         # print("Schema Pruner: LLM call to be done")
@@ -115,6 +116,7 @@ def schema_pruner_node(state: TitanState) -> TitanState:
 
    
     assert isinstance(final_tables, dict)
+    # print(final_tables)
 
     return {
         **state,

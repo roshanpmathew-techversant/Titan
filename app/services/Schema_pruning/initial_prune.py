@@ -77,6 +77,7 @@ def initial_prune(schema: Dict[str, Any], intent: IntentResult) -> PrunedRespons
 
     keywords = intent.get("keywords", [])
     keyword_pattern = build_keyword_pattern(keywords)
+    print(keyword_pattern)
 
     pruned_tables: Dict[str, TableSchema] = {}
     tables = schema.get("tables", {})
@@ -93,7 +94,8 @@ def initial_prune(schema: Dict[str, Any], intent: IntentResult) -> PrunedRespons
                 primary_key=table_def.get("primary_key", []),
                 foreign_keys=table_def.get("foreign_keys", [])
             )
-
+    # print("Initial Pruned: ",pruned_tables)
+    
     return PrunedResponse(
         version="v2",
         tables=pruned_tables
