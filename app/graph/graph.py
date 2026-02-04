@@ -7,6 +7,7 @@ from app.graph.nodes.schema_loader import schema_loader_node
 from app.graph.nodes.user_intent import intent_extractor_node
 from app.graph.nodes.schema_pruner import schema_pruner_node
 from app.graph.nodes.sql_generator import sql_generator_node
+from app.graph.nodes.sql_validator import sql_validator
 
 def route_after_intent(state: TitanState) -> str:
     """
@@ -26,6 +27,8 @@ def build_titan_graph():
     graph.add_node("social_node", social_node)       
     graph.add_node("schema_pruner", schema_pruner_node)
     graph.add_node("sql_generator", sql_generator_node)
+    graph.add_node("sql_validator", sql_validator)
+
 
 
 
@@ -44,5 +47,7 @@ def build_titan_graph():
     # graph.add_edge("intent_extractor", "schema_loader")
     graph.add_edge("schema_loader", "schema_pruner")
     graph.add_edge("schema_pruner", "sql_generator")
-    graph.add_edge("sql_generator", END)
+    graph.add_edge("sql_generator", "sql_validator")
+    graph.add_edge("sql_validator", END)
+
     return graph.compile()

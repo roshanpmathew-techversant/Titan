@@ -13,6 +13,6 @@ class UserResponse(BaseModel):
     message: Dict[str, Any]
     pruned_schema: Optional[PrunedResponse]
     sql_query: Optional[str]
-    sql_validation: Optional[str]
+    sql_validation: Optional[SqlValidationResult]
     response: Optional[str]
     

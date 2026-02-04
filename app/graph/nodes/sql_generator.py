@@ -118,7 +118,8 @@ def sql_generator_node(state: TitanState) -> TitanState:
     if not intent or intent.get("intent_type") not in {"AGGREGATE", "LIST", "FILTER","COMPARE","TREND","SUMMARY"}:
         return {
             **state,
-            "sql_query": "INVALID_QUERY"
+            "sql_query": "INVALID_QUERY",
+            "response": "Query Generation Failed"
         }
 
     system_prompt = build_sql_system_prompt()
@@ -140,8 +141,13 @@ def sql_generator_node(state: TitanState) -> TitanState:
     
     sql = re.sub(r"```sql|```", "", sql).strip()
     sql = " ".join(sql.split())
+    inavlid = False
+
+    if "INVALID" in sql:
+        inavlid = True
 
     return {
         **state,
-        "sql_query": sql
+        "sql_query": sql,
+        "response": "Query Generation Failed" if inavlid else "Query Generated"
     }

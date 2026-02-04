@@ -1,1 +1,2 @@
-store_transaction
+store_master
+store_region_map
