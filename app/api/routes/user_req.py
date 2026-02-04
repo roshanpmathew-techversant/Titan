@@ -24,7 +24,7 @@ def user_input(req: UserRequest):
         intent = result.get("intent")
         if not intent:
             intent = {
-                "intent_type": "SUMMARY",
+                "intent_type": "SOCIAL",
                 "keywords": [],
                 "business_entities": [],
                 "metrics": [],
