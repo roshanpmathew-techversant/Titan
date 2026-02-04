@@ -2,7 +2,7 @@ from typing import TypedDict, Optional, Dict, List
 from app.models.schema import SchemaResponse, PrunedResponse
 
 class IntentResult(TypedDict, total=False):
-    intent_type: str                 # AGGREGATE | LIST | FILTER | COMPARE | TREND | SUMMARY
+    intent_type: str                 # AGGREGATE | LIST | FILTER | COMPARE | TREND | SOCIAL
     keywords: List[str]
     business_entities: List[str]
     metrics: List[str]
@@ -25,6 +25,8 @@ class TitanState(TypedDict, total=False):
 
     sql_query: str
 
+    response: str
+
     schema: Optional[SchemaResponse]
 
     intent: Optional[IntentResult]
@@ -32,7 +34,7 @@ class TitanState(TypedDict, total=False):
     # intent: Optional[Dict[str, Any]]
     pruned_schema: Optional[PrunedResponse]
 
-    sql_validator: Optional[SqlValidationResult]
+    sql_validation: Optional[SqlValidationResult]
     #sql :
 
 

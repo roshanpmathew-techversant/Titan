@@ -1,6 +1,8 @@
 from pydantic import BaseModel
 from typing import Dict, Any
 from app.models.schema import PrunedResponse
+from app.graph.state import SqlValidationResult
+
 
 class UserRequest(BaseModel):
     user_id: str
@@ -11,4 +13,5 @@ class UserResponse(BaseModel):
     message: Dict[str, Any]
     pruned_schema: PrunedResponse
     sql_query: str
+    validation: SqlValidationResult
     

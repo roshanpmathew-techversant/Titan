@@ -21,7 +21,6 @@ def user_input(req: UserRequest):
     try:
         result = graph.invoke(state)
 
-        # fallback intent
         intent = result.get("intent")
         if not intent:
             intent = {
@@ -35,7 +34,6 @@ def user_input(req: UserRequest):
                 "confidence": 0.8,
             }
 
-        # pruned_schema is already a PrunedResponse object
         pruned_schema = result.get("pruned_schema")
         if not pruned_schema or not isinstance(pruned_schema, PrunedResponse):
             pruned_schema = PrunedResponse(
@@ -44,10 +42,10 @@ def user_input(req: UserRequest):
         )
         write_pruned_table_names(pruned_schema, "llm_pruned_schema.txt")
 
-        # Optional: if you need dict access
-        # pruned_schema_dict = pruned_schema.model_dump()
+        
 
         sql_query = result.get("sql_query")
+        validation = result.get("sql_validation")
         
 
     except Exception as e:
@@ -58,5 +56,6 @@ def user_input(req: UserRequest):
         "status": "success",
         "message": intent,
         "pruned_schema": pruned_schema,
-        "sql_query": sql_query
+        "sql_query": sql_query,
+        "validation": validation
     }

@@ -1,52 +1,65 @@
+from typing import List
 from app.graph.state import TitanState
-from typing import  List
+import sqlglot
+from sqlglot import exp
 
-def sql_validator(state: TitanState ) -> TitanState:
+
+FORBIDDEN_STATEMENTS = (
+    exp.Insert,
+    exp.Update,
+    exp.Delete,
+    exp.Alter,
+    exp.Drop,
+    exp.Create,
+)
+
+
+def sql_validator(state: TitanState) -> TitanState:
     errors: List[str] = []
-    normalized_sql = state.strip().lower()
 
-    # Block non-SELECT queries
-    if not normalized_sql.startswith("select"):
+    sql = state.get("sql_query")
+
+    if not sql or not isinstance(sql, str):
+        return {
+            **state,
+            "sql_query": "invalid",
+            "sql_validation": {
+                "is_valid": False,
+                "errors": ["SQL query is missing or invalid"],
+            },
+        }
+
+    try:
+        expression = sqlglot.parse_one(sql)
+    except sqlglot.errors.ParseError as e:
+        return {
+            **state,
+            "sql_query": "invalid",
+            "sql_validation": {
+                "is_valid": False,
+                "errors": [f"SQL parse error: {str(e)}"],
+            },
+        }
+
+    if not isinstance(expression, exp.Select):
         errors.append("Only SELECT queries are allowed")
 
-    # Block dangerous keywords
-    forbidden_keywords = ["insert", "update", "delete", "drop", "alter"]
-    for keyword in forbidden_keywords:
-        if re.search(rf"\\b{keyword}\\b", normalized_sql):
-            errors.append(f"Forbidden keyword detected: {keyword}")
+    for forbidden in FORBIDDEN_STATEMENTS:
+        if expression.find(forbidden):
+            errors.append("DB mutating statements are not allowed")
+            break
 
-    # Block SELECT *
-    if re.search(r"select\\s+\\*", normalized_sql):
-        errors.append("SELECT * is not allowed")
+    for proj in expression.expressions:
+        if isinstance(proj, exp.Star):
+            errors.append("SELECT * is not allowed")
 
+    is_valid = len(errors) == 0
 
-    # Enforce LIMIT
-    if "limit" not in normalized_sql:
-        errors.append("LIMIT clause is required")
-
-
-    # Extract tables
-    table_matches = re.findall(r"from\\s+(\\w+)", normalized_sql)
-    for table in table_matches:
-        if table not in pruned_schema:
-            errors.append(f"Table not allowed: {table}")
-
-
-    # Extract columns
-    select_match = re.search(r"select\\s+(.*?)\\s+from", normalized_sql)
-    if select_match:
-        columns = [c.strip() for c in select_match.group(1).split(",")]
-        for col in columns:
-            if "." in col:
-                table, column = col.split(".", 1)
-                if (table not in pruned_schema or column not in pruned_schema[table]):
-                    errors.append(f"Invalid column reference: {col}")
-            else:
-                if not any(col in cols for cols in pruned_schema.values()):
-                    errors.append(f"Unknown column: {col}")
-
-    return{
+    return {
         **state,
-        "is_valid":len(errors) == 0,
-        "errors":errors
+        "sql_query": state["sql_query"] if is_valid else "invalid",
+        "sql_validation": {
+            "is_valid": is_valid,
+            "errors": errors,
+        },
     }
