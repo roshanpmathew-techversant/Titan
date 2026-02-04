@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     # INTENT_RECOG_PROMPT: str
     # SCHEMA_PRUNING_PROMPT: str
 
+    SOCIAL_PROMPT: str
+
 
     GEMINI_API_KEY: str | None = None
 

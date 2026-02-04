@@ -58,6 +58,6 @@ def user_input(req: UserRequest):
         "message": intent,
         "pruned_schema": pruned_schema,
         "sql_query": sql_query,
-        "validation": validation,
+        "sql_validation": validation,
         "response": response
     }
