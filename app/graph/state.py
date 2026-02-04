@@ -29,6 +29,8 @@ class TitanState(TypedDict, total=False):
 
     intent: Optional[IntentResult]
 
+    response: Optional[str]
+
     # intent: Optional[Dict[str, Any]]
     pruned_schema: Optional[PrunedResponse]
 

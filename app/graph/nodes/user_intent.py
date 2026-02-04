@@ -46,6 +46,7 @@ def intent_extractor_node(state: TitanState) -> TitanState:
     - Use AGGREGATE if the user asks for totals, counts, averages, summaries, OR "highest/lowest" (ranking).
     - Use COMPARE only if the user explicitly compares two or more entities or categories.
     - Use TREND only if the user explicitly asks for change over time.
+    - Use SOCIAL if user communicates in a social way like hi,hello,thank you or other social greetings
     - Otherwise, intent_type MUST be LIST.
 
     Time & Date Rules:

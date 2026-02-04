@@ -48,6 +48,7 @@ def user_input(req: UserRequest):
         # pruned_schema_dict = pruned_schema.model_dump()
 
         sql_query = result.get("sql_query")
+        response = result.get("response")
         
 
     except Exception as e:
@@ -58,5 +59,6 @@ def user_input(req: UserRequest):
         "status": "success",
         "message": intent,
         "pruned_schema": pruned_schema,
-        "sql_query": sql_query
+        "sql_query": sql_query,
+        "response": response
     }
