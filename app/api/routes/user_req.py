@@ -46,6 +46,7 @@ def user_input(req: UserRequest):
 
         sql_query = result.get("sql_query")
         validation = result.get("sql_validation")
+        response = result.get("response")
         
 
     except Exception as e:
@@ -57,5 +58,6 @@ def user_input(req: UserRequest):
         "message": intent,
         "pruned_schema": pruned_schema,
         "sql_query": sql_query,
-        "validation": validation
+        "validation": validation,
+        "response": response
     }
