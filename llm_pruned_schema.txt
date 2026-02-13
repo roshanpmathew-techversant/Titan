@@ -1,2 +1,1 @@
-store_master
-store_region_map
+store_consolidated_data
