@@ -17,7 +17,13 @@ class SqlValidationResult(TypedDict):
     errors: List[str]
 
 class TitanState(TypedDict, total=False):
+    
+    user_id: str
+    chat_id: str
+    
     user_query: str
+
+    
 
     db_id: str
 
@@ -26,6 +32,8 @@ class TitanState(TypedDict, total=False):
     sql_query: str
 
     response: str
+
+    memory_hit: Optional[bool]
 
     schema: Optional[SchemaResponse]
 

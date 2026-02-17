@@ -23,6 +23,7 @@ class Settings(BaseSettings):
 
 
     GEMINI_API_KEY: str | None = None
+    MEMORY_PG_CLOUD: str | None = None
 
     LANGFUSE_SECRET_KEY: str | None = None
     LANGFUSE_PUBLIC_KEY: str | None = None

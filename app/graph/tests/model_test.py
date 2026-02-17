@@ -3,7 +3,12 @@ from app.core.secrets import get_gemini_api_key
 
 client = genai.Client(api_key=get_gemini_api_key())
 
-models = list(client.models.list())
+text_to_embed = "User prefers dark mode and works night shifts."
 
-for m in models:
-    print(m.name)
+
+response = client.models.embed_content(
+    model="models/gemini-embedding-001",
+    contents=text_to_embed
+)
+
+embedding = response.embeddings[0].values

@@ -7,6 +7,7 @@ def user_input_node(state: TitanState) -> TitanState:
     """
 
     # print("[user_input_node] raw query:", state["user_query"])
+    
 
     user_query = state['user_query'].strip()
 

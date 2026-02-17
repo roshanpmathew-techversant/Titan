@@ -11,7 +11,8 @@ def format_response(user_req: str, db_response: dict) -> str:
     """
     Formats raw DB results into a clean, user-friendly response
     using Gemini LLM.
-    """    if not user_req:
+    """    
+    if not user_req:
         return "Invalid request."
 
     if not db_response:

@@ -16,6 +16,8 @@ def user_input(req: UserRequest):
 
     state: TitanState = {
         "user_query": req.user_req,
+        "user_id": req.user_id,
+        "chat_id": req.chat_id
     }
 
     try:
@@ -44,8 +46,19 @@ def user_input(req: UserRequest):
 
         
 
-        sql_query = result.get("sql_query")
+        sql_query = result.get("sql_query") 
+        if not sql_query:
+            sql_query = ""
+        
         validation = result.get("sql_validation")
+        if not validation:
+            validation = {
+            "is_valid": False,
+            "errors": [],
+            }
+            
+        
+        
         response = result.get("response")
         
 
@@ -55,7 +68,7 @@ def user_input(req: UserRequest):
 
     return {
         "status": "success",
-        "message": intent,
+        "intent": intent,
         "pruned_schema": pruned_schema,
         "sql_query": sql_query,
         "sql_validation": validation,
