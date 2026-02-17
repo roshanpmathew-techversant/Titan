@@ -1,7 +1,7 @@
 import psycopg2
 from app.graph.state import TitanState
 from app.core.settings import get_settings
-from typing import List
+
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from app.core.secrets import get_gemini_api_key
 
